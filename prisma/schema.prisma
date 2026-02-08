@@ -1,0 +1,75 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id             Int     @id @default(autoincrement())
+  name           String
+  email          String  @unique
+  spaceId        Int
+  authType       String  @default("google")
+  hostSpaces     Space[] @relation("HostSpaces")
+  SongsAdded     Song[]
+  memberships    SpaceMember[]
+  upVotes        UpVote[]
+}
+
+
+model Space {
+  id            Int     @id @default(autoincrement())
+  name          String  
+  host          User    @relation("HostSpaces", references: [id], fields: [hostId])
+  songs         Song[]
+  hostId        Int
+  spaceMembers  SpaceMember[]
+  createdAt     DateTime   @default(now())
+}
+
+model SpaceMember {
+  id        Int       @id @default(autoincrement())
+  user      User      @relation(references: [id], fields: [userId])
+  space     Space     @relation(references: [id], fields: [spaceId])
+  userId    Int
+  role      Role      @default(LISTNER)
+  spaceId   Int
+  joinedAt  DateTime  @default(now())
+  @@unique([userId, spaceId])
+}
+
+model Song {
+  id          Int       @id @default(autoincrement())
+  space       Space     @relation(references: [id], fields: [spaceId])
+  spaceId     Int
+  addedById   Int
+  users       User      @relation(references: [id], fields: [addedById])
+  upVotes     UpVote[]
+  createdAt   DateTime  @default(now())
+  smallImg    String        
+  bigImg      String        
+
+}
+
+model UpVote {
+  id          Int    @id @default(autoincrement())
+  userId      Int
+  songId      Int
+  song        Song   @relation(references: [id], fields: [songId])
+  user        User   @relation(references: [id], fields: [userId])
+  @@unique([userId, songId])
+}
+
+enum Role {
+  LISTNER
+  HOST
+}
