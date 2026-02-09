@@ -17,7 +17,6 @@ model User {
   id             Int     @id @default(autoincrement())
   name           String
   email          String  @unique
-  spaceId        Int
   authType       String  @default("google")
   hostSpaces     Space[] @relation("HostSpaces")
   SongsAdded     Song[]
@@ -51,6 +50,7 @@ model Song {
   id          Int       @id @default(autoincrement())
   space       Space     @relation(references: [id], fields: [spaceId])
   spaceId     Int
+  played      Boolean   @default(false)
   addedById   Int
   users       User      @relation(references: [id], fields: [addedById])
   upVotes     UpVote[]
