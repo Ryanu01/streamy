@@ -52,6 +52,7 @@ model Song {
   spaceId     Int
   played      Boolean   @default(false)
   addedById   Int
+  title       String
   users       User      @relation(references: [id], fields: [addedById])
   upVotes     UpVote[]
   createdAt   DateTime  @default(now())

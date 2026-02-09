@@ -12,4 +12,5 @@ export const AddMemberSchema = z.object({
 
 export const AddSongSchema = z.object({
     spaceId: z.string(),
+    url: z.string()
 })

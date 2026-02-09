@@ -11,7 +11,7 @@ export async function POST (req: NextRequest) {
             return NextResponse.json({
                 message: "Invalid schema while creating space"
             }, {
-                status: 411
+                status: 400
             })
         }
 

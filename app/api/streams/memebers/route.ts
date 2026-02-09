@@ -12,7 +12,7 @@ export async function POST (req: NextRequest) {
             return NextResponse.json({
                 message: "Invalid Schema while adding member"
             }, {
-                status: 411
+                status: 400
             })
         }
 
