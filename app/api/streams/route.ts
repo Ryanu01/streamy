@@ -15,16 +15,44 @@ export async function POST (req: NextRequest) {
             })
         }
 
-        const createSpace = await prisma.space.create({
-            data: {
-                hostId: Number(data.hostId),
-                name: data.name
+        const userExist = await prisma.user.findFirst({
+            where: {
+                id: Number(data.hostId)
             }
         })
 
+        if(!userExist) {
+            return NextResponse.json({
+                message: "User does not exist"
+            }, {
+                status: 404
+            })
+        }
+
+        const space = await prisma.$transaction(async (tnx) => {
+            const createSpace = await tnx.space.create({
+                data: {
+                    hostId: userExist.id,
+                    name: data.name
+                }    
+            })
+
+            await tnx.spaceMember.create({
+                data: {
+                    spaceId: createSpace.id,
+                    userId: userExist.id,
+                    role: "HOST"
+                }
+            })
+
+            return createSpace
+        })
+
+        
+
         return NextResponse.json({
             message: "Space created successfully",
-            space: createSpace
+            space
         })
     } catch (error) {
         return NextResponse.json({

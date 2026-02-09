@@ -30,25 +30,23 @@ export async function POST (req: NextRequest) {
             })
         }
 
-        if(spaceExist.hostId === Number(data.userId)) {
-            const memberDb = await prisma.spaceMember.create({
-                data: {
-                    userId: Number(data.userId),
-                    role: "HOST",
-                    spaceId: Number(data.spaceId)
-                }
-            })
+        const userExist = await prisma.user.findFirst({
+            where: {
+                id: Number(data.userId)
+            }
+        })
 
+        if(!userExist) {
             return NextResponse.json({
-                members: memberDb,
-                message: "User added"
+                message: "User does not exist"
+            }, {
+                status: 404
             })
         }
 
         const memberDb = await prisma.spaceMember.create({
             data: {
-                userId: Number(data.userId),
-                role: data.role,
+                userId: userExist.id,
                 spaceId: Number(data.spaceId)
             }
         })

@@ -7,6 +7,9 @@ export const CreateSpaceSchema = z.object({
 
 export const AddMemberSchema = z.object({
     spaceId: z.string(),
-    userId: z.string(),
-    role: z.enum(["LISTNER", "HOST"])
+    userId: z.string()
+})
+
+export const AddSongSchema = z.object({
+    spaceId: z.string(),
 })
