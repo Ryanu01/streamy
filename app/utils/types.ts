@@ -14,3 +14,10 @@ export const AddSongSchema = z.object({
     spaceId: z.string(),
     url: z.string()
 })
+
+export const UpvoteSchema = z.object({
+    songId: z.string()
+})
+export const DownvoteSchema = z.object({
+    songId: z.string()
+})
