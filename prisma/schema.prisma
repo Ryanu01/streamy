@@ -47,17 +47,19 @@ model SpaceMember {
 }
 
 model Song {
-  id          Int       @id @default(autoincrement())
-  space       Space     @relation(references: [id], fields: [spaceId])
-  spaceId     Int
-  played      Boolean   @default(false)
-  addedById   Int
-  title       String
-  users       User      @relation(references: [id], fields: [addedById])
-  upVotes     UpVote[]
-  createdAt   DateTime  @default(now())
-  smallImg    String        
-  bigImg      String        
+  id              Int       @id @default(autoincrement())
+  space           Space     @relation(references: [id], fields: [spaceId])
+  spaceId         Int
+  played          Boolean   @default(false)
+  addedById       Int
+  extractedId     String
+  title           String
+  users           User      @relation(references: [id], fields: [addedById])
+  upVotes         UpVote[]
+  createdAt       DateTime  @default(now())
+  smallImg        String        
+  bigImg          String        
+  CurrentStreams  CurrentStream[]
 
 }
 
@@ -68,6 +70,12 @@ model UpVote {
   song        Song   @relation(references: [id], fields: [songId])
   user        User   @relation(references: [id], fields: [userId])
   @@unique([userId, songId])
+}
+
+model CurrentStream {
+  spaceId     Int    @id
+  songId      Int
+  song        Song   @relation(references: [id], fields: [songId])
 }
 
 enum Role {
