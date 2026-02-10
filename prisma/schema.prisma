@@ -60,7 +60,7 @@ model Song {
   smallImg        String        
   bigImg          String        
   CurrentStreams  CurrentStream[]
-
+  playedTs        DateTime?
 }
 
 model UpVote {
