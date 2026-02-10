@@ -156,8 +156,21 @@ export async function GET (req: NextRequest) {
             })
         ])
 
+        if(!streams.length) {
+            return NextResponse.json({
+                message: "Unable to fetch streams for this spaceId",
+                spaceId
+            }, {
+                status: 400
+            })
+        }
+
         return NextResponse.json({
-            streams, 
+            streams: streams.map(({_count, ...rest}) => ({
+                ...rest,
+                upVotes: _count.upVotes,
+                haveUpVoted: rest.upVotes.length ? true : false
+            })), 
             acitveStreams
         })
     } catch (error) {
