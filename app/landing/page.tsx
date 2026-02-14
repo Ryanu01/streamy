@@ -7,10 +7,14 @@ import { Card } from "@/components/ui/card";
 import { ArrowBigUp, ArrowBigDown, Share2, Play, Plus } from "lucide-react";
 import SlackIcon from '@/components/ui/slack-icon';
 import { ModeToggle } from '@/components/modeToggle';
+import { signIn, signOut, useSession } from 'next-auth/react';
+import { redirect } from 'next/navigation';
+import { ToolTipcomponent } from '@/components/ToolTipComponent';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 
 const LandingPage = () => {
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
-
+  const [roomName, setRoomName] = useState("")
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
       setMousePos({ x: e.clientX, y: e.clientY });
@@ -19,6 +23,9 @@ const LandingPage = () => {
     return () => window.removeEventListener('mousemove', handleMouseMove);
   }, []);
 
+  const {data: session} = useSession()
+  console.log(session);
+  
   return (
     <div className="relative min-h-screen bg-[#0B0B0B] text-slate-100 overflow-hidden font-mono">
       
@@ -47,9 +54,19 @@ const LandingPage = () => {
             
         </span>
         <div className="flex gap-4">
-          <Button className="bg-[#CCFF00] text-black hover:bg-[#b3e600] rounded-none font-bold">
-            CONNECT WALLET
-          </Button>
+            {session?.user ? <Button 
+            onClick={() => {
+                signOut()
+            }}
+            className="bg-[#CCFF00] cursor-pointer text-black hover:bg-[#b3e600] rounded-none font-bold">
+                Logout
+            </Button> : <Button
+             onClick={() => {
+                signIn()
+             }}
+             className="bg-[#CCFF00] cursor-pointer text-black hover:bg-[#b3e600] rounded-none font-bold">
+                Login    
+            </Button> }
         </div>
       </nav>
 
@@ -64,24 +81,72 @@ const LandingPage = () => {
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4">
-            <Button size="lg" className="h-14 px-8 bg-[#CCFF00] text-black hover:bg-[#b3e600] rounded-none text-lg font-bold shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] active:translate-y-1 active:shadow-none transition-all">
-              START A ROOM
-            </Button>
+            {session?.user?.id ?
+            
+                <Dialog>
+                  
+                <DialogTrigger asChild>
+              <Button size="lg" onClick={() => {
+                  // wait
+              }} disabled={false} className="h-14 px-8 bg-[#CCFF00] text-black hover:bg-[#b3e600] rounded-none text-lg font-bold shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] active:translate-y-1 active:shadow-none transition-all">
+                START A ROOM
+              </Button>
+            </DialogTrigger>
+
+            <DialogContent  className="sm:max-w-sm">
+              <DialogHeader>
+                <DialogTitle>
+                  Create a Room
+                </DialogTitle>
+                <DialogDescription>
+                  Enter the details below to start a new room.
+                </DialogDescription>
+              </DialogHeader>
+
+              <div className='flex flex-col gap-4 mt-4'>
+                <Input onChange={(e) => {
+                  setRoomName(e.target.value)
+                }} placeholder='Room Name'/>
+              </div>
+
+              <DialogFooter className='mt-4'>
+                <Button onClick={async () => {
+                  alert(roomName)
+                }} className='bg-[#CCFF00] text-black'>Create Room</Button>
+              </DialogFooter>
+            </DialogContent>
+            </Dialog>
+
+             :  <ToolTipcomponent warning='Please sign in'>
+              <span>
+                <Button size="lg" disabled={true} className="h-14 px-8 bg-[#CCFF00] text-black hover:bg-[#b3e600] rounded-none text-lg font-bold shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] active:translate-y-1 active:shadow-none transition-all">
+                  START A ROOM
+                </Button>
+              </span>  
+              </ToolTipcomponent>
+              }
             <div className="flex">
               <Input 
                 placeholder="ENTER ROOM ID" 
                 className="h-14 bg-white/5 border-white/10 rounded-none w-48 focus-visible:ring-[#CCFF00]"
               />
-              <Button size="lg" variant="outline" className="h-14 rounded-none border-l-0 border-white/10 hover:bg-[#CCFF00] hover:text-black">
+              {session?.user.id ?
+               <Button disabled={false}  size="lg" variant="outline" className="h-14 rounded-none border-l-0 border-white/10 hover:bg-[#CCFF00] hover:text-black">
                 JOIN
-              </Button>
+              </Button> : <ToolTipcomponent  warning='Please sign in'>
+                <span>
+                    <Button disabled={true}  size="lg" variant="outline" className="h-14 rounded-none border-l-0 border-white/10 hover:bg-[#CCFF00] hover:text-black">
+                    JOIN
+                  </Button>
+                </span>
+              </ToolTipcomponent> }
             </div>
           </div>
         </div>
 
         {/* --- LIVE PREVIEW COMPONENT --- */}
         <div className="relative">
-          <div className="absolute -inset-1 bg-[#CCFF00] opacity-20 blur-2xl animate-pulse" />
+          <div className="absolute -inset-1 bg-[#CCFF00] opacity-20 blur-xl animate-pulse" />
           <Card className="relative bg-[#151515] border-white/10 rounded-none p-6 shadow-2xl">
             <div className="flex justify-between items-center mb-6">
               <div className="flex items-center gap-2">
@@ -124,9 +189,7 @@ const LandingPage = () => {
           </Card>
         </div>
       </main>
-
-      {/* --- FOOTER / STATS --- */}
-      <footer className="relative z-20 border-t border-white/5 mt-20 py-10 bg-black">
+<footer className="relative z-20 border-t border-white/5 mt-20 py-10 bg-black">
         <div className="container mx-auto px-6 flex flex-wrap justify-between gap-8 opacity-50 grayscale hover:grayscale-0 transition-all">
           <div className="space-y-1">
             <div className="text-xs uppercase tracking-widest">Active Rooms</div>
@@ -142,6 +205,7 @@ const LandingPage = () => {
           </div>
         </div>
       </footer>
+      
     </div>
   );
 };
