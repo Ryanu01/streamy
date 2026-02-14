@@ -97,7 +97,7 @@ const LandingPage = () => {
                 { title: "Stop Breathing", artist: "Playboi Carti", votes: 38, active: false },
                 { title: "After Hours", artist: "The Weeknd", votes: 12, active: false },
               ].map((song, i) => (
-                <div key={i} className={`flex items-center justify-between p-4 border ${song.active ? 'border-[#CCFF00] bg-[#CCFF00]/5' : 'border-white/5 bg-white/[0.02]'}`}>
+                <div key={i} className={`flex items-center justify-between p-4 border ${song.active ? 'border-[#CCFF00] bg-[#CCFF00]/5' : 'border-white/5 bg-white/2'}`}>
                   <div className="flex items-center gap-4">
                     <span className="text-white/20 font-bold">0{i+1}</span>
                     <div>

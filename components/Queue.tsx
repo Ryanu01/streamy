@@ -10,7 +10,7 @@ export const Queue = () => {
                   { title: "BUFFER OVERFLOW", artist: "C_PLUS_PLUS", votes: 21, color: "text-white" },
                   { title: "GHOST IN SHELL", artist: "MAJOR_K", votes: 12, color: "text-white/50" },
                 ].map((track, i) => (
-                  <div key={i} className="group flex items-center gap-4 p-4 bg-white/[0.02] border border-white/5 hover:border-[#CCFF00]/50 transition-all">
+                  <div key={i} className="group flex items-center gap-4 p-4 bg-white/2 border border-white/5 hover:border-[#CCFF00]/50 transition-all">
                     <div className="text-2xl font-black text-white/10 w-8 group-hover:text-[#CCFF00]/20">{i+1}</div>
                     
                     <div className="flex-1">
