@@ -16,7 +16,7 @@ export const Header = () => {
             </div>
           </span>
           <Badge variant="outline" className="rounded-none border-[#CCFF00]/30 text-[#CCFF00] bg-[#CCFF00]/5 gap-2">
-            <Users2 className="w-3 h-3" /> 24 LISTENING
+            <Users2 className="w-3 h-3" /> 
           </Badge>
         </div>
         <div className="flex gap-4">

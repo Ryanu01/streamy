@@ -6,7 +6,6 @@ export async function POST (req: NextRequest) {
     try {
         const body = await req.json()
         const { data, success } = CreateSpaceSchema.safeParse(body)
-        console.log(body);
         
         if(!success) {
             return NextResponse.json({

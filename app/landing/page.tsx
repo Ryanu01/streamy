@@ -8,7 +8,7 @@ import { ArrowBigUp, ArrowBigDown, Share2, Play, Plus } from "lucide-react";
 import SlackIcon from '@/components/ui/slack-icon';
 import { ModeToggle } from '@/components/modeToggle';
 import { signIn, signOut, useSession } from 'next-auth/react';
-import { redirect } from 'next/navigation';
+import { redirect, useRouter } from 'next/navigation';
 import { ToolTipcomponent } from '@/components/ToolTipComponent';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 
@@ -24,8 +24,8 @@ const LandingPage = () => {
   }, []);
 
   const { data: session } = useSession()
-  console.log(session);
 
+  const router = useRouter()
   return (
     <div className="relative min-h-screen bg-[#0B0B0B] text-slate-100 overflow-hidden font-mono">
 
@@ -111,18 +111,25 @@ const LandingPage = () => {
 
                   <DialogFooter className='mt-4'>
                     <Button onClick={async () => {
-                      console.log(process.env.NEXTAUTH_URL);
+                      try {
+                        const res = await fetch("/api/streams", {
+                          method: "POST",
+                          headers: {
+                            "Content-Type": "application/json",
+                          },
+                          body: JSON.stringify({
+                            hostId: session?.user?.id?.toString(),
+                            name: roomName,
+                          }),
+                        });
 
-                      await fetch("/api/streams", {
-                        method: "POST",
-                        headers: {
-                          "Content-Type": "application/json",
-                        },
-                        body: JSON.stringify({
-                          hostId: session.user.id.toString(),
-                          name: roomName,
-                        }),
-                      })
+                        const data = await res.json();
+
+
+                        router.push(`main/${data.space.id}`)
+                      } catch (error) {
+                        console.error("Error creating room:", error);
+                      }
 
                     }} className='bg-[#CCFF00] text-black'>Create Room</Button>
                   </DialogFooter>
