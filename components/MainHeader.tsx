@@ -5,8 +5,23 @@ import { Badge } from "@/components/ui/badge";
 
 import SlackIcon from "./ui/slack-icon"
 import { Button } from "./ui/button"
+import { useEffect, useState } from "react";
 
-export const Header = () => {
+export const Header =  ({roomId}: {
+  roomId: string
+}) => {
+
+  const [memberCount, SetMemberCount] = useState(Number);
+
+  useEffect(() => {
+    fetch(`http://localhost:3000/api/streams/members/?spaceId=${roomId}`)
+    .then(res => {
+      return res.json()
+    }).then(data => {
+      SetMemberCount(data.memberCount)
+    })    
+  }, [roomId])
+
     return <header className="flex justify-between items-center px-8 py-4 border-b border-white/10 bg-black/40 backdrop-blur-xl relative z-50">
         <div className="flex items-center gap-6">
           <span className="flex text-[#CCFF00] font-black tracking-tighter text-xl decoration-2 ">
@@ -17,6 +32,7 @@ export const Header = () => {
           </span>
           <Badge variant="outline" className="rounded-none border-[#CCFF00]/30 text-[#CCFF00] bg-[#CCFF00]/5 gap-2">
             <Users2 className="w-3 h-3" /> 
+            {memberCount}
           </Badge>
         </div>
         <div className="flex gap-4">

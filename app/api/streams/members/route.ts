@@ -67,13 +67,16 @@ export async function POST (req: NextRequest) {
 export async function GET (req: NextRequest) {
     try {
         const spaceId = req.nextUrl.searchParams.get("spaceId");
-
+        console.log(spaceId);
+        
         const spaceExist = await prisma.space.findFirst({
             where: {
                 id: Number(spaceId)
             }
         })
 
+        console.log(spaceExist);
+        
         if(!spaceExist) {
             return NextResponse.json({
                 message: "Space does not exist"

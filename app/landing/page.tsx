@@ -86,9 +86,7 @@ const LandingPage = () => {
               <Dialog>
 
                 <DialogTrigger asChild>
-                  <Button size="lg" onClick={() => {
-                    // wait
-                  }} disabled={false} className="h-14 px-8 bg-[#CCFF00] text-black hover:bg-[#b3e600] rounded-none text-lg font-bold shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] active:translate-y-1 active:shadow-none transition-all">
+                  <Button size="lg" className="h-14 px-8 bg-[#CCFF00] text-black hover:bg-[#b3e600] rounded-none text-lg font-bold shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] active:translate-y-1 active:shadow-none transition-all">
                     START A ROOM
                   </Button>
                 </DialogTrigger>
@@ -208,7 +206,7 @@ const LandingPage = () => {
           </Card>
         </div>
       </main>
-      <footer className="relative z-20 border-t border-white/5 mt-20 py-10 bg-black">
+      <footer className="relative z-20 border-t border-white/5 mt-9 py-10 bg-black">
         <div className="container mx-auto px-6 flex flex-wrap justify-between gap-8 opacity-50 grayscale hover:grayscale-0 transition-all">
           <div className="space-y-1">
             <div className="text-xs uppercase tracking-widest">Active Rooms</div>

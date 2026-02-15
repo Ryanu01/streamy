@@ -2,11 +2,14 @@
 import { ArrowBigDown, ArrowBigUp } from "lucide-react"
 
 export const Queue = () => {
-    return <div className="flex-1 overflow-y-auto p-4 space-y-2 scrollbar-hide">
+    return <div className="flex-1 min-h-0 overflow-y-auto p-4 space-y-2 scrollbar-hide">
                 {[
                   { title: "CIRCUIT BREAKER", artist: "VOLT_AGE", votes: 89, color: "text-[#CCFF00]" },
                   { title: "DATA STREAM", artist: "NULL_VOID", votes: 54, color: "text-white" },
                   { title: "LOGIC BOMB", artist: "ROOT_USER", votes: 42, color: "text-white" },
+                  { title: "BUFFER OVERFLOW", artist: "C_PLUS_PLUS", votes: 21, color: "text-white" },
+                  { title: "BUFFER OVERFLOW", artist: "C_PLUS_PLUS", votes: 21, color: "text-white" },
+                  { title: "BUFFER OVERFLOW", artist: "C_PLUS_PLUS", votes: 21, color: "text-white" },
                   { title: "BUFFER OVERFLOW", artist: "C_PLUS_PLUS", votes: 21, color: "text-white" },
                   { title: "GHOST IN SHELL", artist: "MAJOR_K", votes: 12, color: "text-white/50" },
                 ].map((track, i) => (
