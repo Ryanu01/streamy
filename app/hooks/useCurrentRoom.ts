@@ -8,7 +8,6 @@ const ROOM_ENTRY_TIME_KEY = "streamy_room_entry_time";
 export function useCurrentRoom() {
   const [currentRoomId, setCurrentRoomId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-
   useEffect(() => {
     if (typeof window !== "undefined") {
       const storedRoomId = localStorage.getItem(CURRENT_ROOM_KEY);
@@ -25,9 +24,14 @@ export function useCurrentRoom() {
     }
   }, []);
 
-  const leaveRoom = useCallback(() => {
+  const leaveRoom = useCallback((roomId: string) => {
     if (typeof window !== "undefined") {
-      
+      fetch("http://localhost:3000/api/streams/leaveroom", {
+        method: "POST",
+        body: JSON.stringify({spaceId: roomId })
+      }).then(res => {
+        return res.json()
+      })
       localStorage.removeItem(CURRENT_ROOM_KEY);
       localStorage.removeItem(ROOM_ENTRY_TIME_KEY);
       setCurrentRoomId(null);
