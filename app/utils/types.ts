@@ -21,3 +21,7 @@ export const UpvoteSchema = z.object({
 export const DownvoteSchema = z.object({
     songId: z.string()
 })
+
+export const LeaveRoomSchema = z.object({
+    spaceId: z.string()
+})
