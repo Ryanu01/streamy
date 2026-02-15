@@ -15,6 +15,24 @@ export async function GET (req: NextRequest) {
             })
         }
 
+        const currentStream = await prisma.currentStream.findFirst({
+            where: {
+                spaceId: Number(spaceId)
+            }
+        });
+
+        if (currentStream) {
+            await prisma.song.update({
+                where: {
+                    id: currentStream.songId
+                },
+                data: {
+                    played: true,
+                    playedTs: new Date()
+                }
+            });
+        }
+
         const mostUpvotedSong = await prisma.song.findFirst({
             where: {
                 spaceId: Number(spaceId),
@@ -27,8 +45,16 @@ export async function GET (req: NextRequest) {
         })
 
         if(!mostUpvotedSong) {
+            await prisma.currentStream.delete({
+                where: {
+                    spaceId: Number(spaceId)
+                }
+            }).catch(() => {
+                // Ignore if doesn't exist
+            });
+            
             return NextResponse.json({
-                message: "No Streams"
+                message: "No more songs in queue"
             }, {
                 status: 411
             })
@@ -44,20 +70,11 @@ export async function GET (req: NextRequest) {
                     spaceId: Number(spaceId),
                     songId: mostUpvotedSong.id
                 }
-            }), (async () => {
-                await prisma.upVote.deleteMany({
-                    where: {
-                        songId: mostUpvotedSong.id
-                    }
-                });
-                await prisma.song.update({
-                    where: {
-                        id: mostUpvotedSong.id
-                    }, data: {
-                        played: true,
-                        playedTs: new Date()
-                    }
-                })
+            }),
+            prisma.upVote.deleteMany({
+                where: {
+                    songId: mostUpvotedSong.id
+                }
             })
         ])
 
