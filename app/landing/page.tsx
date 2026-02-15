@@ -4,17 +4,21 @@ import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
-import { ArrowBigUp, ArrowBigDown, Share2, Play, Plus } from "lucide-react";
+import { ArrowBigUp, ArrowBigDown, Share2, Plus } from "lucide-react";
 import SlackIcon from '@/components/ui/slack-icon';
 import { ModeToggle } from '@/components/modeToggle';
 import { signIn, signOut, useSession } from 'next-auth/react';
 import { redirect, useRouter } from 'next/navigation';
 import { ToolTipcomponent } from '@/components/ToolTipComponent';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { RoomGuard } from "@/app/components/RoomGuard";
+import { useCurrentRoom } from "@/app/hooks/useCurrentRoom";
 
-const LandingPage = () => {
+const LandingPageContent = () => {
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const [roomName, setRoomName] = useState("")
+  const [roomId, setRoomId] = useState<String>("")
+
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
       setMousePos({ x: e.clientX, y: e.clientY });
@@ -26,10 +30,10 @@ const LandingPage = () => {
   const { data: session } = useSession()
 
   const router = useRouter()
+
   return (
     <div className="relative min-h-screen bg-[#0B0B0B] text-slate-100 overflow-hidden font-mono">
 
-      {/* --- PIXELATED CURSOR GLOW EFFECT --- */}
       <div
         className="pointer-events-none fixed inset-0 z-30 opacity-60"
         style={{
@@ -37,7 +41,6 @@ const LandingPage = () => {
         }}
       />
 
-      {/* The Grid Overlay */}
       <div className="absolute inset-0 z-10 opacity-20 pointer-events-none"
         style={{
           backgroundImage: `linear-gradient(#333 1px, transparent 1px), linear-gradient(90deg, #333 1px, transparent 1px)`,
@@ -46,7 +49,6 @@ const LandingPage = () => {
         }}
       />
 
-      {/* --- NAV BAR --- */}
       <nav className="relative z-40 flex justify-between items-center p-6 border-b border-white/10 bg-black/50 backdrop-blur-md">
         <span className="flex text-2xl font-black tracking-tighter text-[#CCFF00]">
 
@@ -70,7 +72,6 @@ const LandingPage = () => {
         </div>
       </nav>
 
-      {/* --- HERO SECTION --- */}
       <main className="relative z-20 container mx-auto px-6 pt-24 pb-12 grid lg:grid-cols-2 gap-12 items-center">
         <div>
           <h1 className="text-7xl md:text-8xl font-black leading-none tracking-tighter mb-6">
@@ -144,11 +145,23 @@ const LandingPage = () => {
             }
             <div className="flex">
               <Input
+                onChange={(e) => {
+                  setRoomId(e.target.value)
+                }}
                 placeholder="ENTER ROOM ID"
                 className="h-14 bg-white/5 border-white/10 rounded-none w-48 focus-visible:ring-[#CCFF00]"
               />
               {session?.user.id ?
-                <Button disabled={false} size="lg" variant="outline" className="h-14 rounded-none border-l-0 border-white/10 hover:bg-[#CCFF00] hover:text-black">
+                <Button disabled={roomId ? false : true} size="lg" variant="outline"  onClick={() => {
+                      fetch(`http://localhost:3000/api/streams/members`, {
+                        method: "POST",
+                        body: JSON.stringify({spaceId: roomId.toString(), userId: session?.user.id.toString()})
+                      }).then(res => {
+                        return res.json()
+                      })
+
+                      router.push(`main/${roomId}`)
+                    }} className="h-14 rounded-none border-l-0 border-white/10 hover:bg-[#CCFF00] hover:text-black">
                   JOIN
                 </Button> : <ToolTipcomponent warning='Please sign in'>
                   <span>
@@ -161,7 +174,6 @@ const LandingPage = () => {
           </div>
         </div>
 
-        {/* --- LIVE PREVIEW COMPONENT --- */}
         <div className="relative">
           <div className="absolute -inset-1 bg-[#CCFF00] opacity-20 blur-xl animate-pulse" />
           <Card className="relative bg-[#151515] border-white/10 rounded-none p-6 shadow-2xl">
@@ -224,6 +236,14 @@ const LandingPage = () => {
       </footer>
 
     </div>
+  );
+};
+
+const LandingPage = () => {
+  return (
+    <RoomGuard allowedWhenInRoom={false}>
+      <LandingPageContent />
+    </RoomGuard>
   );
 };
 
