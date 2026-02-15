@@ -41,7 +41,6 @@ function roomReducer(state: RoomState, action: RoomAction): RoomState {
       return { ...state, currentSong: action.payload };
     
     case "ADD_SONG": {
-      // Don't add if already exists or is current song
       if (state.queue.find(s => s.id === action.payload.id) || 
           state.currentSong?.id === action.payload.id) {
         return state;
@@ -56,8 +55,7 @@ function roomReducer(state: RoomState, action: RoomAction): RoomState {
       
       const updatedQueue = state.queue.map(song => {
         if (song.id === action.payload.songId) {
-          // If this is from socket and not current user, just update the count
-          // If this is current user's action, also update haveUpVoted
+
           const isCurrentUserAction = action.payload.haveUpVoted !== undefined;
           
           return {
@@ -112,7 +110,6 @@ export function RoomProvider({ roomId, children }: { roomId: string; children: R
   const { socket, isConnected } = useSocket(roomId);
   const { data: session } = useSession();
 
-  // Check host status
   useEffect(() => {
     const checkHostStatus = async () => {
       try {
@@ -133,7 +130,6 @@ export function RoomProvider({ roomId, children }: { roomId: string; children: R
     }
   }, [roomId, session?.user?.id]);
 
-  // Fetch initial state
   const fetchFullState = useCallback(async () => {
     dispatch({ type: "SET_LOADING", payload: true });
     try {
@@ -160,12 +156,10 @@ export function RoomProvider({ roomId, children }: { roomId: string; children: R
     }
   }, [roomId]);
 
-  // Initial load
   useEffect(() => {
     fetchFullState();
   }, [fetchFullState]);
 
-  // Socket event listeners
   useEffect(() => {
     if (!socket) return;
 
@@ -176,7 +170,7 @@ export function RoomProvider({ roomId, children }: { roomId: string; children: R
         type: "UPDATE_VOTES", 
         payload: {
           songId: data.songId,
-          upVotes: voteChange, // This will be added to existing
+          upVotes: voteChange,
           haveUpVoted: data.type === "upvote",
           userId: data.userId
         }
@@ -207,13 +201,11 @@ export function RoomProvider({ roomId, children }: { roomId: string; children: R
     };
   }, [socket]);
 
-  // Actions
   const upvoteSong = useCallback(async (songId: number) => {
     if (!session?.user?.id || !socket) return;
 
     const currentUserId = Number(session.user.id);
 
-    // Optimistic update
     dispatch({ 
       type: "UPDATE_VOTES", 
       payload: {
@@ -242,7 +234,6 @@ export function RoomProvider({ roomId, children }: { roomId: string; children: R
 
     const currentUserId = Number(session.user.id);
 
-    // Optimistic update
     dispatch({ 
       type: "UPDATE_VOTES", 
       payload: {
