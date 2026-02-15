@@ -16,17 +16,14 @@ export function useVotingController(roomId: string) {
   const [isHost, setIsHost] = useState(false);
   const currentSongRef = useRef<Song | null>(null);
 
-  // Memoize current song to prevent reference changes
   const currentSong = useMemo(() => {
     return queueState.activeStream?.song || null;
   }, [queueState.activeStream?.song?.id]);
 
-  // Keep ref in sync with state
   useEffect(() => {
     currentSongRef.current = queueState.activeStream?.song || null;
   }, [queueState.activeStream]);
 
-  // Check if user is host
   useEffect(() => {
     const checkHostStatus = async () => {
       try {
@@ -47,7 +44,6 @@ export function useVotingController(roomId: string) {
     }
   }, [roomId, session?.user?.id]);
 
-  // Fetch only queue (streams), preserve current song
   const fetchQueueOnly = useCallback(async () => {
     try {
       const response = await fetch(
@@ -58,16 +54,12 @@ export function useVotingController(roomId: string) {
       const data = await response.json();
       
       if (data.streams) {
-        // Get current song ID from ref to avoid state dependency
         const currentSongId = currentSongRef.current?.id;
         
-        // Filter out the currently playing song from the queue
         const filteredStreams = (data.streams || []).filter((s: Song) => s.id !== currentSongId);
         
-        // Sort by upvotes (descending)
         const sortedStreams = filteredStreams.sort((a: Song, b: Song) => b.upVotes - a.upVotes);
         
-        // Only update the streams, preserve activeStream
         setQueueState(prev => ({
           ...prev,
           streams: sortedStreams,
@@ -78,7 +70,6 @@ export function useVotingController(roomId: string) {
     }
   }, [roomId]);
 
-  // Fetch full state (including current song) - only for initial load
   const fetchFullState = useCallback(async () => {
     try {
       const response = await fetch(
@@ -92,10 +83,8 @@ export function useVotingController(roomId: string) {
         const backendCurrentStream = data.acitveStreams || null;
         const currentSongId = backendCurrentStream?.song?.id;
         
-        // Filter out the currently playing song from the queue
         const filteredStreams = (data.streams || []).filter((s: Song) => s.id !== currentSongId);
         
-        // Sort by upvotes (descending)
         const sortedStreams = filteredStreams.sort((a: Song, b: Song) => b.upVotes - a.upVotes);
         
         setQueueState({
@@ -110,14 +99,12 @@ export function useVotingController(roomId: string) {
     }
   }, [roomId]);
 
-  // Initial fetch only once when host status is known
   useEffect(() => {
     if (isHost !== undefined) {
       fetchFullState();
     }
   }, [fetchFullState, isHost]);
 
-  // Listen for real-time vote updates
   useEffect(() => {
     if (!socket) return;
 
@@ -154,14 +141,11 @@ export function useVotingController(roomId: string) {
 
     const handleQueueUpdated = (newSong: Song) => {
       console.log("New song added via socket:", newSong.title);
-      // Add new song to queue without affecting current song
       setQueueState((prev) => {
-        // Check if song already exists
         if (prev.streams.some(s => s.id === newSong.id)) {
           return prev;
         }
         
-        // Don't add if it's the current song
         if (prev.activeStream?.song?.id === newSong.id) {
           return prev;
         }
@@ -177,7 +161,6 @@ export function useVotingController(roomId: string) {
     };
 
     const handleCurrentSongChanged = () => {
-      // Only update current song, not the queue
       fetchFullState();
     };
 
@@ -192,7 +175,6 @@ export function useVotingController(roomId: string) {
     };
   }, [socket, session?.user?.id, fetchFullState]);
 
-  // Upvote function
   const upvote = useCallback(
     async (songId: number) => {
       if (!session?.user?.id) return;
@@ -229,7 +211,6 @@ export function useVotingController(roomId: string) {
     [socket, roomId, session?.user?.id, fetchQueueOnly]
   );
 
-  // Downvote function
   const downvote = useCallback(
     async (songId: number) => {
       if (!session?.user?.id) return;
@@ -266,7 +247,6 @@ export function useVotingController(roomId: string) {
     [socket, roomId, session?.user?.id, fetchQueueOnly]
   );
 
-  // Skip to next song (for host only)
   const skipToNext = useCallback(async () => {
     if (!isHost) {
       console.log("Only host can skip songs");
@@ -285,7 +265,6 @@ export function useVotingController(roomId: string) {
         console.log("Skip response:", data);
         
         if (data.mostUpvotedSong) {
-          // Update state immediately with new current song
           setQueueState(prev => {
             const newQueue = prev.streams.filter(s => s.id !== data.mostUpvotedSong.id);
             
@@ -299,14 +278,12 @@ export function useVotingController(roomId: string) {
             };
           });
           
-          // Emit socket event to notify others
           socket?.emit("song-change", {
             roomId,
             currentSong: data.mostUpvotedSong,
             nextSong: null,
           });
         } else {
-          // No more songs
           setQueueState(prev => ({
             ...prev,
             activeStream: null
@@ -320,7 +297,6 @@ export function useVotingController(roomId: string) {
     }
   }, [roomId, socket, isHost]);
 
-  // Memoize queue to prevent unnecessary re-renders
   const queue = useMemo(() => queueState.streams, [queueState.streams]);
 
   return {

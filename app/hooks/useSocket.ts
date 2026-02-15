@@ -8,7 +8,6 @@ export function useSocket(roomId: string) {
   const [isConnected, setIsConnected] = useState(false);
 
   useEffect(() => {
-    // Create socket connection directly to the custom server
     const socket = io("http://localhost:3000", {
       path: "/socket.io",
       transports: ["websocket", "polling"],
@@ -19,7 +18,6 @@ export function useSocket(roomId: string) {
     socket.on("connect", () => {
       console.log("Socket connected:", socket.id);
       setIsConnected(true);
-      // Join the room
       socket.emit("join-room", roomId);
     });
 

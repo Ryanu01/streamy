@@ -9,7 +9,6 @@ export function useCurrentRoom() {
   const [currentRoomId, setCurrentRoomId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Load current room from localStorage on mount
   useEffect(() => {
     if (typeof window !== "undefined") {
       const storedRoomId = localStorage.getItem(CURRENT_ROOM_KEY);
@@ -18,7 +17,6 @@ export function useCurrentRoom() {
     }
   }, []);
 
-  // Enter a room
   const enterRoom = useCallback((roomId: string) => {
     if (typeof window !== "undefined") {
       localStorage.setItem(CURRENT_ROOM_KEY, roomId);
@@ -27,7 +25,6 @@ export function useCurrentRoom() {
     }
   }, []);
 
-  // Leave current room
   const leaveRoom = useCallback(() => {
     if (typeof window !== "undefined") {
       
@@ -37,12 +34,10 @@ export function useCurrentRoom() {
     }
   }, []);
 
-  // Check if user is in a room
   const isInRoom = useCallback(() => {
     return currentRoomId !== null;
   }, [currentRoomId]);
 
-  // Check if trying to access a different room
   const isTryingToAccessDifferentRoom = useCallback((targetRoomId: string) => {
     return currentRoomId !== null && currentRoomId !== targetRoomId;
   }, [currentRoomId]);
