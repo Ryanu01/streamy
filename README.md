@@ -383,7 +383,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
   
 
-- Built with [shadcn/ui](https://ui.shadcn.com/) components and [itshover](https://www.itshover.com/)
+- Built with [shadcn/ui](https://ui.shadcn.com/) components and [itshover](https://www.itshover.com/) and [Aceternity/UI](https://ui.aceternity.com/)
 
 - Inspired by the aux cord battles of car rides past
 
