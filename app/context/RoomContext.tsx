@@ -45,7 +45,21 @@ function roomReducer(state: RoomState, action: RoomAction): RoomState {
           state.currentSong?.id === action.payload.id) {
         return state;
       }
-      const newQueue = [...state.queue, action.payload].sort((a, b) => b.upVotes - a.upVotes);
+      const newSong = {
+        ...action.payload,
+        upVotes: action.payload.upVotes || 0,
+        haveUpVoted: action.payload.haveUpVoted || false
+      };
+      
+      if (!state.currentSong) {
+        return {
+          ...state,
+          currentSong: newSong,
+          queue: state.queue 
+        };
+      }
+      
+      const newQueue = [...state.queue, newSong].sort((a, b) => (b.upVotes || 0) - (a.upVotes || 0));
       return { ...state, queue: newQueue };
     }
     
@@ -55,19 +69,19 @@ function roomReducer(state: RoomState, action: RoomAction): RoomState {
       
       const updatedQueue = state.queue.map(song => {
         if (song.id === action.payload.songId) {
-
           const isCurrentUserAction = action.payload.haveUpVoted !== undefined;
+          const currentVotes = song.upVotes || 0;
           
           return {
             ...song,
-            upVotes: Math.max(0, song.upVotes + voteChange),
+            upVotes: Math.max(0, currentVotes + voteChange),
             haveUpVoted: isCurrentUserAction ? action.payload.haveUpVoted : song.haveUpVoted
           };
         }
         return song;
       });
       
-      return { ...state, queue: updatedQueue.sort((a, b) => b.upVotes - a.upVotes) };
+      return { ...state, queue: updatedQueue.sort((a, b) => (b.upVotes || 0) - (a.upVotes || 0)) };
     }
     
     case "SET_HOST":
@@ -142,8 +156,13 @@ export function RoomProvider({ roomId, children }: { roomId: string; children: R
       
       if (data.streams !== undefined) {
         const currentSongId = data.acitveStreams?.song?.id;
-        const filteredQueue = (data.streams || []).filter((s: Song) => s.id !== currentSongId);
-        const sortedQueue = filteredQueue.sort((a: Song, b: Song) => b.upVotes - a.upVotes);
+        const streamsWithVotes = (data.streams || []).map((s: Song) => ({
+          ...s,
+          upVotes: s.upVotes || 0,
+          haveUpVoted: s.haveUpVoted || false
+        }));
+        const filteredQueue = streamsWithVotes.filter((s: Song) => s.id !== currentSongId);
+        const sortedQueue = filteredQueue.sort((a: Song, b: Song) => (b.upVotes || 0) - (a.upVotes || 0));
         
         dispatch({ type: "SET_QUEUE", payload: sortedQueue });
         dispatch({ type: "SET_CURRENT_SONG", payload: data.acitveStreams?.song || null });
@@ -267,7 +286,7 @@ export function RoomProvider({ roomId, children }: { roomId: string; children: R
 
       if (response.ok) {
         const data = await response.json();
-        if (socket && data.songDb) {
+        if (socket && data.songDb) {  
           socket.emit("queue-update", { roomId, song: data.songDb });
         }
       }
