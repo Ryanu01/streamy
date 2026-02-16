@@ -133,3 +133,53 @@
 .scrollbar-hide::-webkit-scrollbar {
   display: none;             
 } */
+
+@keyframes scan {
+  0% {
+    top: 0%;
+  }
+  100% {
+    top: 100%;
+  }
+}
+
+.glitch {
+  position: relative;
+}
+
+.glitch::before,
+.glitch::after {
+  content: "STREAMY.exe";
+  position: absolute;
+  left: 0;
+  width: 100%;
+  opacity: 0.2;
+}
+
+.glitch::before {
+  color: #CCFF00;
+  animation: glitchTop 2s infinite linear alternate-reverse;
+}
+
+.glitch::after {
+  color: white;
+  animation: glitchBottom 1.5s infinite linear alternate-reverse;
+}
+
+@keyframes glitchTop {
+  0% { transform: translate(0); }
+  20% { transform: translate(-2px, 2px); }
+  40% { transform: translate(-2px, -2px); }
+  60% { transform: translate(2px, 2px); }
+  80% { transform: translate(2px, -2px); }
+  100% { transform: translate(0); }
+}
+
+@keyframes glitchBottom {
+  0% { transform: translate(0); }
+  20% { transform: translate(2px, -2px); }
+  40% { transform: translate(2px, 2px); }
+  60% { transform: translate(-2px, -2px); }
+  80% { transform: translate(-2px, 2px); }
+  100% { transform: translate(0); }
+}
