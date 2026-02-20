@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
-import { ArrowBigUp, ArrowBigDown, Share2, Plus } from "lucide-react";
+import { ArrowBigUp, ArrowBigDown, Share2, Plus, ArrowBigUpDash, ArrowBigUpDashIcon } from "lucide-react";
 import SlackIcon from '@/components/ui/slack-icon';
 import { ModeToggle } from '@/components/modeToggle';
 import { signIn, signOut, useSession } from 'next-auth/react';
@@ -13,6 +13,10 @@ import { ToolTipcomponent } from '@/components/ToolTipComponent';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { RoomGuard } from "@/app/components/RoomGuard";
 import { useCurrentRoom } from "@/app/hooks/useCurrentRoom";
+import { EncryptedText } from '@/components/ui/encrypted-text';
+import GithubIcon from '@/components/ui/github-icon';
+import Link from 'next/link';
+import ArrowBigDownDashIcon from '@/components/ui/arrow-big-down-dash-icon';
 
 const LandingPageContent = () => {
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
@@ -56,11 +60,17 @@ const LandingPageContent = () => {
 
         </span>
         <div className="flex gap-4">
+          <div className="pr-5 pt-0.5">
+            <Link href={"https://github.com/Ryanu01/streamy"} target='_blank'>
+            <GithubIcon  />
+            </Link>
+
+          </div>
           {session?.user ? <Button
             onClick={() => {
               signOut()
             }}
-            className="bg-[#CCFF00] cursor-pointer text-black hover:bg-[#b3e600] rounded-none font-bold">
+            className="bg-[#CCFF00] pt-3 cursor-pointer text-black hover:bg-[#b3e600] rounded-none font-bold">
             Logout
           </Button> : <Button
             onClick={() => {
@@ -75,7 +85,18 @@ const LandingPageContent = () => {
       <main className="relative z-20 container mx-auto px-6 pt-24 pb-12 grid lg:grid-cols-2 gap-12 items-center">
         <div>
           <h1 className="text-7xl md:text-8xl font-black leading-none tracking-tighter mb-6">
-            THE <span className="text-[#CCFF00]">AUX</span> <br /> IS A BATTLEFIELD.
+            <EncryptedText
+            text='THE '
+            />
+            <EncryptedText
+            className="text-[#CCFF00]"
+            text='AUX'
+            />
+            <br />
+            <EncryptedText
+            text='IS A BATTLEFIELD.'
+            />
+            
           </h1>
           <p className="text-xl text-slate-400 max-w-md mb-8 border-l-2 border-[#CCFF00] pl-4">
             Create a room. Invite the crew. Upvote the anthems, bury the skips. The crowd decides what plays next.
@@ -204,8 +225,8 @@ const LandingPageContent = () => {
                       <div className={`text-sm font-black ${song.active ? 'text-[#CCFF00]' : ''}`}>{song.votes}</div>
                     </div>
                     <div className="flex flex-col gap-1">
-                      <ArrowBigUp className={`w-5 h-5 cursor-pointer hover:fill-[#CCFF00] ${song.active ? 'fill-[#CCFF00] text-[#CCFF00]' : 'text-white/20'}`} />
-                      <ArrowBigDown className="w-5 h-5 text-white/20 cursor-pointer hover:fill-red-500" />
+                      <ArrowBigUpDashIcon className={`w-5 h-5 cursor-pointer hover:fill-[#CCFF00] ${song.active ? 'fill-[#CCFF00] text-[#CCFF00]' : 'text-white/20'}`} />
+                      <ArrowBigDownDashIcon className="w-5 h-5 text-white/20 cursor-pointer hover:fill-red-500" />
                     </div>
                   </div>
                 </div>
@@ -218,22 +239,65 @@ const LandingPageContent = () => {
           </Card>
         </div>
       </main>
-      <footer className="relative z-20 border-t border-white/5 mt-9 py-10 bg-black">
-        <div className="container mx-auto px-6 flex flex-wrap justify-between gap-8 opacity-50 grayscale hover:grayscale-0 transition-all">
-          <div className="space-y-1">
-            <div className="text-xs uppercase tracking-widest">Active Rooms</div>
-            <div className="text-2xl font-bold">1,204</div>
-          </div>
-          <div className="space-y-1">
-            <div className="text-xs uppercase tracking-widest">Votes Cast</div>
-            <div className="text-2xl font-bold">892.5k</div>
-          </div>
-          <div className="space-y-1">
-            <div className="text-xs uppercase tracking-widest">Avg Session</div>
-            <div className="text-2xl font-bold">42m</div>
-          </div>
-        </div>
-      </footer>
+    <footer className="relative z-20 bg-black overflow-hidden mt-12">
+
+
+  <div className="absolute inset-0 pointer-events-none opacity-10">
+    <div className="absolute w-full h-[2px] bg-[#CCFF00] animate-[scan_6s_linear_infinite]" />
+  </div>
+
+  <div
+    className="absolute inset-0 opacity-[0.04] pointer-events-none"
+    style={{
+      backgroundImage:
+        "linear-gradient(#CCFF00 1px, transparent 1px), linear-gradient(90deg, #CCFF00 1px, transparent 1px)",
+      backgroundSize: "40px 40px",
+    }}
+  />
+
+  <div className="relative container mx-auto px-6 py-8 flex flex-col md:flex-row justify-between items-center gap-6">
+
+    <div className="flex flex-col md:flex-row items-center gap-4 text-center md:text-left">
+      <div className="text-xl font-black tracking-tight text-[#CCFF00] glitch">
+        STREAMY.exe
+      </div>
+
+      <div className="text-xs text-[#CCFF00] opacity-80 animate-pulse">
+        ▍LIVE SIGNAL
+      </div>
+    </div>
+
+    <div className="flex items-center gap-6 text-sm text-white/40">
+  <Link
+    href="https://github.com/Ryanu01"
+    target="_blank"
+    className="group relative"
+  >
+    <span className="group-hover:text-[#CCFF00] transition">
+      GitHub
+    </span>
+    <span className="absolute left-0 -bottom-1 h-[1px] w-0 bg-[#CCFF00] group-hover:w-full transition-all duration-300" />
+  </Link>
+
+  <Link
+    href="https://x.com/Ryangomes0109"
+    target="_blank"
+    className="group relative"
+  >
+    <span className="group-hover:text-[#CCFF00] transition">
+      X
+    </span>
+    <span className="absolute left-0 -bottom-1 h-[1px] w-0 bg-[#CCFF00] group-hover:w-full transition-all duration-300" />
+  </Link>
+</div>
+
+
+    <div className="text-xs text-white/20">
+      © {new Date().getFullYear()} STREAMY
+    </div>
+
+  </div>
+</footer>
 
     </div>
   );
