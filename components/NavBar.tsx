@@ -6,13 +6,17 @@ import { ModeToggle } from "./modeToggle";
 import SlackIcon from "./ui/slack-icon";
 import GithubIcon from "./ui/github-icon";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function NavBar() {
     const { data: session } = useSession()
-
-    return <nav className="relative z-40 flex justify-between items-center p-6 border-b border-white/10 bg-black/50 backdrop-blur-md">
-        <span className="flex text-2xl font-black tracking-tighter text-[#CCFF00]">
-
+    const router = useRouter()
+    return <nav className="relative font-mono z-40 flex justify-between items-center p-6 border-b border-white/10 bg-black/50 backdrop-blur-md">
+        <span className="flex cursor-pointer  text-3xl font-black tracking-tighter text-[#CCFF00]"
+            onClick={() => {
+                router.push("landing")
+            }} 
+        >
             <SlackIcon className='w-8 h-8' />{" "}STREAMY
 
         </span>

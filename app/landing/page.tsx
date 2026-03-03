@@ -54,7 +54,7 @@ const LandingPageContent = () => {
       />
 
       <nav className="relative z-40 flex justify-between items-center p-6 border-b border-white/10 bg-black/50 backdrop-blur-md">
-        <span className="flex text-2xl font-black tracking-tighter text-[#CCFF00]">
+        <span className="flex text-3xl font-black tracking-tighter text-[#CCFF00]">
 
           <SlackIcon className='w-8 h-8' />{" "}STREAMY
 
@@ -66,18 +66,27 @@ const LandingPageContent = () => {
             </Link>
 
           </div>
+          
+            <Button className="bg-[#CCFF00] pt-3 cursor-pointer text-black hover:bg-[#b3e600] rounded-none font-bold"
+            onClick={() => {
+              router.push("myspace")
+            }}
+            >
+              my space
+            </Button>
+          
           {session?.user ? <Button
             onClick={() => {
               signOut()
             }}
             className="bg-[#CCFF00] pt-3 cursor-pointer text-black hover:bg-[#b3e600] rounded-none font-bold">
-            Logout
+              Logout              
           </Button> : <Button
             onClick={() => {
               signIn()
             }}
-            className="bg-[#CCFF00] cursor-pointer text-black hover:bg-[#b3e600] rounded-none font-bold">
-            Login
+            className="bg-[#CCFF00] pt-3 cursor-pointer text-black hover:bg-[#b3e600] rounded-none font-bold">
+              Login
           </Button>}
         </div>
       </nav>
