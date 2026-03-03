@@ -3,6 +3,9 @@
 import { Share2, Users2, LogOut } from "lucide-react"
 import { Badge } from "@/components/ui/badge";
 import { useRouter } from "next/navigation";
+import {socket} from "@/lib/socket"
+
+
 
 import SlackIcon from "./ui/slack-icon"
 import { Button } from "./ui/button"
@@ -12,18 +15,49 @@ import { useCurrentRoom } from "@/app/hooks/useCurrentRoom";
 export const Header =  ({roomId}: {
   roomId: string
 }) => {
-  const [memberCount, SetMemberCount] = useState(Number);
+  const [memberCount, SetMemberCount] = useState(0);
   const { leaveRoom } = useCurrentRoom();
   const router = useRouter();
 
+
   useEffect(() => {
-    fetch(`http://localhost:3000/api/streams/members/?spaceId=${roomId}`)
-    .then(res => {
-      return res.json()
-    }).then(data => {
-      SetMemberCount(data.memberCount)
-    })    
-  }, [roomId])
+    if (!roomId) return;
+  
+    socket.emit("join-room", roomId);
+  
+    // @ts-ignore
+    socket.on("member-count", (count) => {
+      SetMemberCount(count);
+    });
+  
+    return () => {
+      socket.emit("leave-room", roomId);
+      socket.off("member-count");
+    };
+  
+  }, [roomId]);
+
+  // useEffect(() => {
+   
+   
+  //  socket.emit("join-room", roomId)
+   
+  //  socket.on("member-count", (count) => {
+  //   SetMemberCount(count);
+  // });
+   
+  
+  // return () => {
+  //   socket.emit("leave-room", roomId);
+  //   socket.off("member-count");
+  // };
+    // fetch(`http://localhost:3000/api/streams/members/?spaceId=${roomId}`)
+    // .then(res => {
+    //   return res.json()
+    // }).then(data => {
+    //   SetMemberCount(data.memberCount)
+    // })    
+  // }, [roomId])
 
   const handleLeaveRoom = () => {
     leaveRoom(roomId);
